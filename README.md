@@ -1,12 +1,12 @@
 # opencode-quota-header
 
-OpenCode Desktop plugin: OpenCode Go / Go Plus usage in the session header.
+OpenCode Desktop plugin: OpenCode Go usage in the session header.
 
 ```text
-Go 5h 37% · Week 56% · Month 43%    ◔ 130k
+Go 3h 37% · 3d 56% · 13d 43%    ◔ 130k
 ```
 
-Left of the context ring. Orange at 70%, red at 90%. Click for the native Usage dialog. Refreshes every 60 seconds.
+Left of the context ring. Orange at 70%, red at 90%. Click for the native Usage dialog. Refreshes every 60 seconds. Labels show the time until each window resets: 3h, 3d, 13d.
 
 ## Install
 
@@ -41,7 +41,7 @@ Manual:
 
 - `refreshSeconds`: 30–3600, default 60.
 - label: prefix, for example Go+.
-- language: auto (default), en, zh, zht; unknown falls back to English.
+- language: auto (default), en, zh, zht; controls the prefix and tooltip; unknown falls back to English.
 
 ## Notes
 

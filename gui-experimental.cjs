@@ -9,12 +9,12 @@
 //     .rolling / .weekly / .monthly -> { percent, resetsAt, limited }
 
 const { Plugin, Slot, Style } = require("@opencode/plugin/gui")
-const { createEffect, onCleanup } = require("solid-js")
+const { createEffect, createSignal, onCleanup } = require("solid-js")
 
 const WINDOW_ORDER = [
-  { key: "rolling", label: "label.rolling" },
-  { key: "weekly", label: "label.weekly" },
-  { key: "monthly", label: "label.monthly" },
+  { key: "rolling", fallback: "label.rolling" },
+  { key: "weekly", fallback: "label.weekly" },
+  { key: "monthly", fallback: "label.monthly" },
 ]
 
 const DEFAULT_REFRESH_SECONDS = 60
@@ -36,6 +36,19 @@ function customLabel(value) {
 
   const label = value.trim().slice(0, 12)
   return label || undefined
+}
+
+function remaining(resetsAt) {
+  if (typeof resetsAt !== "number" || !Number.isFinite(resetsAt)) return undefined
+
+  const minutes = Math.floor(Math.max(0, resetsAt - Date.now()) / 60_000)
+  if (minutes < 1) return "0m"
+  if (minutes < 60) return `${minutes}m`
+
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h`
+
+  return `${Math.floor(hours / 24)}d`
 }
 
 const css = `
@@ -107,7 +120,11 @@ function paint(el, go, compact, t, label) {
   frag.append(name)
 
   // Narrow headers keep only the fullest window, so the title does not lose its room.
-  const windows = WINDOW_ORDER.map((item) => ({ label: t(item.label), percent: go?.[item.key]?.percent }))
+  const windows = WINDOW_ORDER.map((item) => {
+    const meter = go?.[item.key]
+
+    return { label: remaining(meter?.resetsAt) ?? t(item.fallback), percent: meter?.percent }
+  })
 
   if (compact) {
     let worst = { label: t("label.usage"), percent: undefined }
@@ -157,7 +174,7 @@ const COPY = {
     "label.monthly": "Month",
     "label.usage": "Usage",
     "aria": "OpenCode Go usage",
-    "title": "OpenCode Go / Go Plus usage (5-hour / week / month) · Click for details",
+    "title": "OpenCode Go usage · Click for details",
   },
   zh: {
     "label.go": "Go",
@@ -166,7 +183,7 @@ const COPY = {
     "label.monthly": "月",
     "label.usage": "用量",
     "aria": "OpenCode Go 已用额度",
-    "title": "OpenCode Go / Go Plus 已用额度（5 小时 / 周 / 月）· 点击查看详情",
+    "title": "OpenCode Go 已用额度 · 点击查看详情",
   },
   zht: {
     "label.go": "Go",
@@ -175,7 +192,7 @@ const COPY = {
     "label.monthly": "月",
     "label.usage": "用量",
     "aria": "OpenCode Go 已用額度",
-    "title": "OpenCode Go / Go Plus 已用額度（5 小時 / 週 / 月）· 點擊查看詳情",
+    "title": "OpenCode Go 已用額度 · 點擊查看詳情",
   },
 }
 
@@ -235,7 +252,11 @@ module.exports = Plugin.define({
           void session.server.data.location.usage.sync(location).catch(() => lastSync.delete(key))
         }
 
+        const [tick, setTick] = createSignal(0)
+
         createEffect(() => {
+          tick()
+
           const session = input.session
           const location = session?.location
           if (!location) return
@@ -255,10 +276,12 @@ module.exports = Plugin.define({
         })
 
         let timer
+        let ticker
         const stop = () => {
-          if (timer === undefined) return
-          clearInterval(timer)
+          if (timer !== undefined) clearInterval(timer)
+          if (ticker !== undefined) clearInterval(ticker)
           timer = undefined
+          ticker = undefined
         }
 
         const start = () => {
@@ -267,6 +290,7 @@ module.exports = Plugin.define({
 
           sync()
           timer = setInterval(sync, interval)
+          ticker = setInterval(() => setTick((n) => n + 1), 60_000)
         }
 
         const onVisibility = () => start()
