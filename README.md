@@ -6,7 +6,7 @@ OpenCode Desktop plugin: OpenCode Go / Go Plus usage in the session header.
 Go 5h 37% · Week 56% · Month 43%    ◔ 130k
 ```
 
-Left of the context ring. Orange at 70%, red at 90%. Click for the native Usage dialog. Refreshes every 60 seconds; needs network. Labels follow the app language. Go and Go Plus share the same meters; the prefix stays Go for both plans, and the label option can show Go+ instead.
+Left of the context ring. Orange at 70%, red at 90%. Click for the native Usage dialog. Refreshes every 60 seconds.
 
 ## Install
 
