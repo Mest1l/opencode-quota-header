@@ -1,57 +1,30 @@
 # opencode-quota-header
 
-OpenCode Desktop GUI plugin that shows your OpenCode Go / Go Plus usage in the
-session header:
+OpenCode Desktop plugin: OpenCode Go / Go Plus usage in the session header.
 
 ```text
 Go 5h 37% · Week 56% · Month 43%    ◔ 130k
 ```
 
-- Rolling 5-hour, weekly and monthly used share, immediately left of the context ring.
-- Orange at 70%, red at 90%.
-- Click it to open the app's native **Usage** dialog, with reset countdowns.
-- Data comes from the app's own usage store, the same numbers as Console.
-- Go and Go Plus expose the same three meters; the percentages follow the plan's
-  allowance. The API does not include the tier, so the prefix stays `Go`; set
-  `options.label` to `Go+` if you want to show the tier.
-- Labels follow the app language: English (default), Simplified Chinese, and
-  Traditional Chinese; other locales fall back to English.
-- Refreshes on mount, when the window becomes visible, and every 60 seconds by
-  default. `options.refreshSeconds` changes it (30–3600).
-- A refresh asks the local OpenCode server, which calls the OpenCode Console API.
-  It needs network; offline, the last numbers stay.
+Left of the context ring. Orange at 70%, red at 90%. Click for the native Usage dialog. Refreshes every 60 seconds; needs network. Labels follow the app language. Go and Go Plus share the same meters; the prefix stays Go for both plans, and the label option can show Go+ instead.
 
 ## Install
-
-### From npm
-
-```sh
-opencode plugin add opencode-quota-header
-```
-
-### From GitHub
 
 ```sh
 opencode plugin add github:Mest1l/opencode-quota-header
 ```
 
-### Manual
+npm, after publishing:
 
-1. Copy this folder to your OpenCode plugins directory:
-   - Windows: `%USERPROFILE%\.config\opencode\plugins\opencode-quota-header`
-   - macOS/Linux: `~/.config/opencode/plugins/opencode-quota-header`
-   - If `XDG_CONFIG_HOME` is set, use `$XDG_CONFIG_HOME/opencode/plugins/...`
-2. Add the path to `plugins` in `opencode.json`:
+```sh
+opencode plugin add opencode-quota-header
+```
 
-   ```jsonc
-   {
-     "plugins": ["./plugins/opencode-quota-header"]
-   }
-   ```
+Manual:
 
-3. Restart OpenCode Desktop, or reload the config.
-
-There is no build step: `gui-experimental.cjs` is the prebuilt bundle.
+1. Copy this folder to `~/.config/opencode/plugins/opencode-quota-header`.
+2. Add `"./plugins/opencode-quota-header"` to `plugins` in `opencode.json`.
+3. Restart Desktop. No build step.
 
 ## Options
 
@@ -66,50 +39,10 @@ There is no build step: `gui-experimental.cjs` is the prebuilt bundle.
 }
 ```
 
-- `refreshSeconds` is clamped to 30–3600 and defaults to 60. One location is
-  synced at most once per interval, even with several session tabs open.
-- `label` overrides the prefix, for example `Go+` on a Go Plus plan. It is
-  trimmed to 12 characters.
-- `language` picks the label language; see [Language](#language).
-
-### Language
-
-| Value | Labels |
-| --- | --- |
-| `auto` | Follows the app language (default). |
-| `en` | `5h` · Week · Month |
-| `zh` | `5h` · 周 · 月 |
-| `zht` | `5h` · 週 · 月 |
-
-An unsupported value falls back to English.
-
-## Requirements
-
-- OpenCode Desktop 2.2 or newer, with the experimental GUI plugin API.
-- An OpenCode Go or Go Plus subscription.
-- Desktop only; the TUI has no GUI part.
-
-## License
-
-MIT. See [LICENSE](./LICENSE). Copyright (c) 2026 Mest1l.
-
-## Publish
-
-This package is prepared for `Mest1l/opencode-quota-header`.
-
-- **GitHub:** push this folder to that repository; anyone can install it with
-  `opencode plugin add github:Mest1l/opencode-quota-header`.
-- **npm:** the name `opencode-quota-header` is unclaimed; run
-  `npm publish --access public`, then anyone can install it with
-  `opencode plugin add opencode-quota-header`.
-
-See [PUBLISH.md](./PUBLISH.md) for the exact steps.
+- `refreshSeconds`: 30–3600, default 60.
+- label: prefix, for example Go+.
+- language: auto (default), en, zh, zht; unknown falls back to English.
 
 ## Notes
 
-- The GUI plugin API is experimental and may change between OpenCode releases.
-- Only the three OpenCode Go / Go Plus windows are shown; other plans and
-  providers are not queried. The row hides when the workspace has no Go
-  allowance.
-- The new-session draft has no session header or plugin slot yet, so the row
-  appears once a session is open.
+OpenCode Desktop 2.2+ · experimental GUI API · desktop only · the new-session draft has no header slot · MIT, see [LICENSE](./LICENSE) · publishing steps in [PUBLISH.md](./PUBLISH.md).
