@@ -70,8 +70,18 @@ There is no build step: `gui-experimental.cjs` is the prebuilt bundle.
   synced at most once per interval, even with several session tabs open.
 - `label` overrides the prefix, for example `Go+` on a Go Plus plan. It is
   trimmed to 12 characters.
-- `language` is `auto` (default), `en`, `zh` or `zht`. `auto` follows the app
-  language; an unsupported value falls back to English.
+- `language` picks the label language; see [Language](#language).
+
+### Language
+
+| Value | Labels |
+| --- | --- |
+| `auto` | Follows the app language (default). |
+| `en` | `5h` · Week · Month |
+| `zh` | `5h` · 周 · 月 |
+| `zht` | `5h` · 週 · 月 |
+
+An unsupported value falls back to English.
 
 ## Requirements
 
