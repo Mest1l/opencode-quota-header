@@ -249,7 +249,12 @@ module.exports = Plugin.define({
           if (now - (lastSync.get(key) ?? 0) < interval * 0.8) return
 
           lastSync.set(key, now)
-          void session.server.data.location.usage.sync(location).catch(() => lastSync.delete(key))
+
+          // `usage.sync` is cached until invalidated; without this the row never
+          // refetches and keeps the numbers from the first load.
+          const usage = session.server.data.location.usage
+          if (typeof usage.invalidate === "function") usage.invalidate(location)
+          void usage.sync(location).catch(() => lastSync.delete(key))
         }
 
         const [tick, setTick] = createSignal(0)
