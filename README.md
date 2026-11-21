@@ -41,7 +41,6 @@ Manual:
 
 - `refreshSeconds`: 30–3600, default 60.
 - label: prefix, for example Go+.
-- language: auto (default), en, zh, zht; controls the prefix and tooltip; unknown falls back to English.
 
 ## Notes
 
